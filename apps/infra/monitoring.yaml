@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: monitoring
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  source:
+    repoURL: git@github.com:cemildo/lagerr.git
+    chart: kube-prometheus-stack
+    targetRevision: 66.2.1
+    helm:
+      values: |
+        grafana:
+          adminPassword: admin123
+          service:
+            type: ClusterIP
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            hosts: [grafana.127.0.0.1.nip.io]
+        prometheus:
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            hosts: [prometheus.127.0.0.1.nip.io]
+        alertmanager:
+            ingress:
+              enabled: true
+              ingressClassName: nginx
+              hosts: [alertmanager.127.0.0.1.nip.io]
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

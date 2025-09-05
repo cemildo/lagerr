@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: postgres
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: data
+  source:
+    repoURL: git@github.com:cemildo/lagerr.git
+    chart: postgresql
+    targetRevision: 15.5.12
+    helm:
+      values: |
+        auth:
+          username: app
+          password: app123
+          database: appdb
+        primary:
+          persistence:
+            enabled: true
+            size: 5Gi
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+        service:
+          ports:
+            postgresql: 5432
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
