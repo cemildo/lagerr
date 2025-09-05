@@ -56,3 +56,4 @@ kind load docker-image notification:local --name school
 kind load docker-image order:local        --name school
 kind load docker-image lager:local        --name school
 ```
+# lagerr
