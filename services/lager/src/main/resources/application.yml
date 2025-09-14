@@ -10,6 +10,9 @@ spring:
       ddl-auto: validate
     properties:
       hibernate.jdbc.lob.non_contextual_creation: true
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
 
 management:
   endpoints:
@@ -20,6 +23,7 @@ management:
     health:
       probes:
         enabled: true
+        
 
 server:
   port: ${PORT:3000}

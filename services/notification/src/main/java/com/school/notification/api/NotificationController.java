@@ -1,5 +1,7 @@
 package com.school.notification.api;
 
+import com.school.notification.service.NotificationDomainService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.net.URI;
@@ -7,11 +9,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/notification")
+@RequiredArgsConstructor
 public class NotificationController {
   private final NotificationRepository repo;
-  public NotificationController(NotificationRepository repo) { this.repo = repo; }
+  private final NotificationDomainService notificationDomainService;
 
-  @GetMapping public List<Notification> all() { return repo.findAll(); }
+
+  @GetMapping public List<Notification> all() {
+    notificationDomainService.publishNotification("test-order-id");
+    return repo.findAll();
+  }
 
   @PostMapping
   public ResponseEntity<Notification> create(@RequestBody Notification in) {

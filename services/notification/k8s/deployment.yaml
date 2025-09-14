@@ -18,15 +18,31 @@ spec:
           ports:
             - name: http
               containerPort: 3000
+
           env:
             - name: PORT
               value: "3000"
+
             - name: DATABASE_URL
-              valueFrom: { secretKeyRef: { name: app-db, key: url } }
+              valueFrom:
+                secretKeyRef:
+                  name: app-db
+                  key: url
             - name: DATABASE_USERNAME
-              valueFrom: { secretKeyRef: { name: app-db, key: username } }
+              valueFrom:
+                secretKeyRef:
+                  name: app-db
+                  key: username
             - name: DATABASE_PASSWORD
-              valueFrom: { secretKeyRef: { name: app-db, key: password } }
+              valueFrom:
+                secretKeyRef:
+                  name: app-db
+                  key: password
+
+          envFrom:
+            - secretRef:
+                name: rabbitmq-credentials
+
           readinessProbe:
             httpGet: { path: /actuator/health/readiness, port: http }
             initialDelaySeconds: 10

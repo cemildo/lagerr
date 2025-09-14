@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: ${APP_NAME:notification}
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/appdb}
+    username: ${DATABASE_USERNAME:app}
+    password: ${DATABASE_PASSWORD:app123}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.lob.non_contextual_creation: true
+  liquibase:
+    enabled: true
+    change-log: classpath:db/db.changelog-master.yaml
+  rabbitmq:
+    host: ${DATABASE_PASSWORD:localhost}
+    port: ${DATABASE_PASSWORD:30672}
+    username: app
+    password: app123
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,info
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: notification
+
+server:
+  port: ${PORT:3000}

@@ -33,3 +33,14 @@ spec:
     automated:
       prune: true
       selfHeal: true
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-db
+  namespace: default
+type: Opaque
+stringData:
+  username: app
+  password: app123
+  url: jdbc:postgresql://postgres-postgresql.data.svc.cluster.local:5432/appdb

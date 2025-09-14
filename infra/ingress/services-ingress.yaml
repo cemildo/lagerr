@@ -3,41 +3,76 @@ kind: Ingress
 metadata:
   name: services
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
   rules:
-    - host: services.127.0.0.1.nip.io
+    # app microservices grouped under proxy.localhost
+    - host: proxy.localhost
       http:
         paths:
-          - path: /notification/?(.*)
-            pathType: Prefix
+          - path: /notification(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: notification
                 port:
                   number: 80
-          - path: /order/?(.*)
-            pathType: Prefix
+          - path: /order(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: order
                 port:
                   number: 80
-          - path: /lager/?(.*)
-            pathType: Prefix
+          - path: /lager(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: lager
                 port:
                   number: 80
+
 ---
-apiVersion: v1
-kind: Secret
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: app-db
-type: Opaque
-stringData:
-  url: jdbc:postgresql://postgres-postgresql.data.svc.cluster.local:5432/appdb
-  username: app
-  password: app123
+  name: grafana
+  namespace: monitoring
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: monitoring.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: monitoring-grafana
+                port:
+                  number: 80
+
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rabbitmq
+  namespace: messaging
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: rmq.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: rabbitmq
+                port:
+                  number: 15672

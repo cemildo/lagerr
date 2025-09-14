@@ -1,0 +1,11 @@
+com/school/notification/messaging/consumer/imp/DefaultNotificationConsumer.class
+com/school/notification/NotificationApplication.class
+com/school/notification/messaging/producer/imp/DefaultNotificationProducer.class
+com/school/notification/messaging/producer/NotificationProducer.class
+com/school/notification/service/NotificationDomainService.class
+com/school/notification/service/imp/DefaultNotificationDomainService.class
+com/school/notification/api/NotificationRepository.class
+com/school/notification/api/Notification$NotificationBuilder.class
+com/school/notification/messaging/consumer/NotificationConsumer.class
+com/school/notification/api/NotificationController.class
+com/school/notification/api/Notification.class
