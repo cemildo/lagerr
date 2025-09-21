@@ -14,11 +14,28 @@ spring:
     enabled: true
     change-log: classpath:db/db.changelog-master.yaml
   rabbitmq:
-    host: ${RABBITMQ_HOST}
-    port: ${RABBITMQ_PORT}
-    username: ${RABBITMQ_USERNAME}
-    password: ${RABBITMQ_PASSWORD}
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:app}
+    password: ${RABBITMQ_PASSWORD:app123}
     virtual-host: /
+
+app:
+  rabbitmq:
+    exchanges:
+      - name: orders.exchange
+        queues:
+          - name: orders.created.queue
+            routingKey: orders.created
+          - name: orders.cancelled.queue
+            routingKey: orders.cancelled
+
+      - name: lagers.exchange
+        queues:
+          - name: lagers.stock.queue
+            routingKey: lagers.stock.updated
+          - name: lagers.audit.queue
+            routingKey: lagers.audit
 
 management:
   endpoints:

@@ -12,12 +12,12 @@ data:
       - name: Tempo
         type: tempo
         access: proxy
-        url: http://tempo:3200   
+        url: http://tempo.monitoring.svc.cluster.local:3200
         isDefault: false
         jsonData:
           httpMethod: GET
           tracesToLogs:
-            datasourceUid: Loki    # 👈 links traces to logs (if you want)
+            datasourceUid: Loki
             tags: ["job", "instance", "pod", "namespace"]
             mappedTags: [{ key: "service.name", value: "service" }]
             mapTagNamesEnabled: true

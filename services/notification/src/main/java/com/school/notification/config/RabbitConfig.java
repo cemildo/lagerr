@@ -1,26 +1,57 @@
 package com.school.notification.config;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Configuration
 public class RabbitConfig {
-  @Bean
-  public TopicExchange ordersExchange() {
-    return new TopicExchange("notifications.exchange");
+
+  private final RabbitProperties rabbitProperties;
+
+  public RabbitConfig(RabbitProperties rabbitProperties) {
+    this.rabbitProperties = rabbitProperties;
   }
 
   @Bean
-  public Queue ordersQueue() {
-    return new Queue("notifications.queue", true);
+  public List<TopicExchange> exchanges() {
+    return rabbitProperties.getExchanges().stream()
+        .map(e -> new TopicExchange(e.getName()))
+        .collect(Collectors.toList());
   }
 
   @Bean
-  public Binding binding(Queue ordersQueue, TopicExchange ordersExchange) {
-    return BindingBuilder.bind(ordersQueue).to(ordersExchange).with("notifications.created");
+  public List<Queue> queues() {
+    return rabbitProperties.getExchanges().stream()
+        .flatMap(e -> e.getQueues().stream())
+        .map(q -> new Queue(q.getName(), true))
+        .collect(Collectors.toList());
+  }
+
+  @Bean
+  public List<Binding> bindings(List<TopicExchange> exchanges, List<Queue> queues) {
+    return rabbitProperties.getExchanges().stream()
+        .flatMap(exchangeCfg ->
+            exchangeCfg.getQueues().stream()
+                .map(queueCfg -> {
+                  var queue = queues.stream()
+                      .filter(q -> q.getName().equals(queueCfg.getName()))
+                      .findFirst()
+                      .orElseThrow();
+
+                  var exchange = exchanges.stream()
+                      .filter(e -> e.getName().equals(exchangeCfg.getName()))
+                      .findFirst()
+                      .orElseThrow();
+
+                  return BindingBuilder.bind(queue)
+                      .to(exchange)
+                      .with(queueCfg.getRoutingKey());
+                })
+        )
+        .collect(Collectors.toList());
   }
 }

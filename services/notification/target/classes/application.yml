@@ -14,10 +14,28 @@ spring:
     enabled: true
     change-log: classpath:db/db.changelog-master.yaml
   rabbitmq:
-    host: ${DATABASE_PASSWORD:localhost}
-    port: ${DATABASE_PASSWORD:30672}
-    username: app
-    password: app123
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:app}
+    password: ${RABBITMQ_PASSWORD:app123}
+    virtual-host: /
+
+app:
+  rabbitmq:
+    exchanges:
+      - name: orders.exchange
+        queues:
+          - name: orders.created.queue
+            routingKey: orders.created
+          - name: orders.cancelled.queue
+            routingKey: orders.cancelled
+
+      - name: lagers.exchange
+        queues:
+          - name: lagers.stock.queue
+            routingKey: lagers.stock.updated
+          - name: lagers.audit.queue
+            routingKey: lagers.audit
 
 management:
   endpoints:
@@ -30,6 +48,18 @@ management:
   metrics:
     tags:
       application: notification
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://tempo.monitoring.svc.cluster.local:4318/v1/traces
+  observations:
+    enable:
+      rabbitmq: true
+      http: true
+      jdbc: true
 
 server:
   port: ${PORT:3000}

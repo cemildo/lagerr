@@ -35,3 +35,7 @@ p
 @src/main/java/com/school/notification/config/RabbitMqConfig.java,b/6/b6b6e544ae32722d20599f70c28d47e8924e51f3
 r
 Bsrc/main/java/com/school/notification/config/DataSourceConfig.java,7/0/70c00182131972018cc7882279ae4bc9889fed41
+n
+>src/main/java/com/school/notification/config/RabbitConfig.java,1/1/110b7c00facfa406ea05061f7416d03b8bf02174
+r
+Bsrc/main/java/com/school/notification/config/RabbitProperties.java,5/2/52acd1ea9f8013093681a2591c48273113931f3a

@@ -22,6 +22,7 @@ spec:
             enabled: true
             ingressClassName: nginx
             hosts: [grafana.127.0.0.1.nip.io]
+          enabled: false
         prometheus:
           ingress:
             enabled: true
@@ -32,6 +33,9 @@ spec:
               enabled: true
               ingressClassName: nginx
               hosts: [alertmanager.127.0.0.1.nip.io]
+        loki:
+          datasource:
+            enabled: false
   syncPolicy:
     automated:
       prune: true
